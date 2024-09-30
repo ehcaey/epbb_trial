@@ -1,0 +1,421 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Struk Pembayaran" language="groovy" pageWidth="600" pageHeight="400" orientation="Landscape" columnWidth="560" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c495af77-dca1-48a5-aaa2-a41e61adb96c">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="image" class="java.lang.String"/>
+	<parameter name="nova" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+    virtual_account.no_va,
+    no_arsip::text,
+    dat_objek_pajak.kd_propinsi || dat_objek_pajak.kd_dati2 || dat_objek_pajak.kd_kecamatan ||
+    dat_objek_pajak.kd_kelurahan || dat_objek_pajak.kd_blok || dat_objek_pajak.no_urut ||
+    dat_objek_pajak.kd_jns_op AS nop,
+    alamat_op,
+    nm_wp AS nama_wp,
+    sum(jumlah_pajak) AS jumlah_pajak,
+    sum(denda_pajak) AS jumlah_denda,
+    biaya_admin,
+    tagihan AS total_pembayaran,
+    string_agg(tahun_pajak, ', ') AS tahun_pajak,
+    to_char(tgl_pembayaran, 'DD/MM/YYYY') AS tanggal_pembayaran
+FROM
+    epbb.virtual_account
+        JOIN pbb.dat_objek_pajak ON dat_objek_pajak.kd_kecamatan = virtual_account.kd_kecamatan AND
+            dat_objek_pajak.kd_kelurahan = virtual_account.kd_kelurahan AND
+            dat_objek_pajak.kd_blok = virtual_account.kd_blok AND
+            dat_objek_pajak.no_urut = virtual_account.no_urut AND
+            dat_objek_pajak.kd_jns_op = virtual_account.kd_jns_op
+        JOIN pbb.dat_subjek_pajak ON dat_objek_pajak.subjek_pajak_id = dat_subjek_pajak.subjek_pajak_id
+        JOIN epbb.virtual_account_detail ON virtual_account.no_va = virtual_account_detail.no_va
+WHERE virtual_account.no_va = $P{nova}
+GROUP BY 1, 2, 3, 4, 5, 8, 9, 11]]>
+	</queryString>
+	<field name="no_va" class="java.lang.String"/>
+	<field name="no_arsip" class="java.lang.String"/>
+	<field name="nop" class="java.lang.String"/>
+	<field name="alamat_op" class="java.lang.String"/>
+	<field name="nama_wp" class="java.lang.String"/>
+	<field name="jumlah_pajak" class="java.lang.Double"/>
+	<field name="jumlah_denda" class="java.lang.Double"/>
+	<field name="biaya_admin" class="java.lang.Double"/>
+	<field name="total_pembayaran" class="java.lang.Double"/>
+	<field name="tahun_pajak" class="java.lang.String"/>
+	<field name="tanggal_pembayaran" class="java.lang.String"/>
+	<detail>
+		<band height="304" splitType="Stretch">
+			<frame>
+				<reportElement x="0" y="0" width="561" height="304" uuid="70e9c553-0132-4caf-9a8b-c588d5d7de9e"/>
+				<frame>
+					<reportElement x="0" y="68" width="561" height="16" uuid="85877556-3b72-4dbf-8184-972a46878992"/>
+					<staticText>
+						<reportElement x="0" y="0" width="561" height="15" uuid="7fccd7ba-c8b5-462f-9a00-f15c0a301a6c"/>
+						<box topPadding="2" leftPadding="3" bottomPadding="2" rightPadding="3"/>
+						<textElement textAlignment="Center">
+							<font size="8" isBold="false" pdfFontName="Helvetica-Bold"/>
+						</textElement>
+						<text><![CDATA[STRUK PEMBAYARAN PAJAK BUMI DAN BANGUNAN BADAN PENDAPATAN DAERAH KOTA KENDARI]]></text>
+					</staticText>
+				</frame>
+				<frame>
+					<reportElement x="0" y="88" width="561" height="16" uuid="71524acd-734f-4eb5-bbd8-f364e8fc62ed"/>
+					<staticText>
+						<reportElement x="0" y="0" width="112" height="15" uuid="97419a9a-8b79-41bf-896d-d4bb18f1709d"/>
+						<box topPadding="2" leftPadding="3" bottomPadding="2" rightPadding="3"/>
+						<textElement>
+							<font size="8" isBold="false" pdfFontName="Helvetica-Bold"/>
+						</textElement>
+						<text><![CDATA[No. Arsip]]></text>
+					</staticText>
+					<staticText>
+						<reportElement x="112" y="0" width="13" height="15" uuid="a88df2d9-b71a-45d5-99c4-918f39c637e7"/>
+						<box topPadding="2" leftPadding="3" bottomPadding="2" rightPadding="3"/>
+						<textElement>
+							<font size="8" isBold="true" pdfFontName="Helvetica"/>
+						</textElement>
+						<text><![CDATA[:]]></text>
+					</staticText>
+					<textField>
+						<reportElement x="125" y="0" width="436" height="15" uuid="8642e2fb-3fc5-4b66-9e33-7f5eff413576"/>
+						<box topPadding="2" leftPadding="0" bottomPadding="2" rightPadding="3"/>
+						<textElement markup="none">
+							<font size="8" isBold="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{no_arsip}]]></textFieldExpression>
+					</textField>
+				</frame>
+				<frame>
+					<reportElement x="0" y="104" width="561" height="16" uuid="9f63d8bf-e927-4dc2-8d73-b73efdad0ad0"/>
+					<staticText>
+						<reportElement x="0" y="0" width="112" height="15" uuid="b5a8b4f4-1ac3-4b03-8a33-117ec50a7ae9"/>
+						<box topPadding="2" leftPadding="3" bottomPadding="2" rightPadding="3"/>
+						<textElement>
+							<font size="8" isBold="false" pdfFontName="Helvetica-Bold"/>
+						</textElement>
+						<text><![CDATA[Tanggal Pembayaran]]></text>
+					</staticText>
+					<staticText>
+						<reportElement x="112" y="0" width="13" height="15" uuid="29eae864-5444-40d7-bc5d-22b302f64b3b"/>
+						<box topPadding="2" leftPadding="3" bottomPadding="2" rightPadding="3"/>
+						<textElement>
+							<font size="8" isBold="true" pdfFontName="Helvetica"/>
+						</textElement>
+						<text><![CDATA[:]]></text>
+					</staticText>
+					<textField>
+						<reportElement x="125" y="0" width="436" height="15" uuid="fa601437-b762-4e30-b99e-021caa81688c"/>
+						<box topPadding="2" leftPadding="0" bottomPadding="2" rightPadding="3"/>
+						<textElement markup="none">
+							<font size="8" isBold="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{tanggal_pembayaran}]]></textFieldExpression>
+					</textField>
+				</frame>
+				<frame>
+					<reportElement x="0" y="120" width="561" height="16" uuid="dd0b5461-97a2-42c7-8ceb-381cdbaf960d"/>
+					<staticText>
+						<reportElement x="112" y="0" width="13" height="15" uuid="3f8a4500-9829-4b72-90ff-b2f36db2bd70"/>
+						<box topPadding="2" leftPadding="3" bottomPadding="2" rightPadding="3"/>
+						<textElement>
+							<font size="8" isBold="true" pdfFontName="Helvetica"/>
+						</textElement>
+						<text><![CDATA[:]]></text>
+					</staticText>
+					<textField>
+						<reportElement x="125" y="0" width="436" height="15" uuid="589d9bf6-e13c-4a08-a3c4-67cf779d293e"/>
+						<box topPadding="2" leftPadding="0" bottomPadding="2" rightPadding="3"/>
+						<textElement markup="none">
+							<font size="8" isBold="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{no_va}]]></textFieldExpression>
+					</textField>
+					<staticText>
+						<reportElement x="0" y="0" width="112" height="15" uuid="90ca2ba8-00f0-43f3-8ba1-4ce1c2b37776"/>
+						<box topPadding="2" leftPadding="3" bottomPadding="2" rightPadding="3"/>
+						<textElement>
+							<font size="8" isBold="false" pdfFontName="Helvetica-Bold"/>
+						</textElement>
+						<text><![CDATA[Nomor VA]]></text>
+					</staticText>
+				</frame>
+				<frame>
+					<reportElement x="0" y="136" width="561" height="16" uuid="55610e57-0056-4272-8aca-52fed5ff3767"/>
+					<staticText>
+						<reportElement x="0" y="0" width="112" height="15" uuid="784fd4f9-fd68-4a58-80fc-33eb596e3fec"/>
+						<box topPadding="2" leftPadding="3" bottomPadding="2" rightPadding="3"/>
+						<textElement>
+							<font size="8" isBold="false" pdfFontName="Helvetica-Bold"/>
+						</textElement>
+						<text><![CDATA[NOP]]></text>
+					</staticText>
+					<staticText>
+						<reportElement x="112" y="0" width="13" height="15" uuid="b7157f76-eb03-4e4b-b84b-8cba5081d723"/>
+						<box topPadding="2" leftPadding="3" bottomPadding="2" rightPadding="3"/>
+						<textElement>
+							<font size="8" isBold="true" pdfFontName="Helvetica"/>
+						</textElement>
+						<text><![CDATA[:]]></text>
+					</staticText>
+					<textField>
+						<reportElement x="125" y="0" width="436" height="15" uuid="d38ba058-3511-4493-8fc3-e83b7bac1b3b"/>
+						<box topPadding="2" leftPadding="0" bottomPadding="2" rightPadding="3"/>
+						<textElement markup="none">
+							<font size="8" isBold="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{nop}]]></textFieldExpression>
+					</textField>
+				</frame>
+				<frame>
+					<reportElement x="0" y="152" width="561" height="16" uuid="2e41d86d-d127-4ffa-82b9-d036e2ca59bc"/>
+					<staticText>
+						<reportElement x="112" y="0" width="13" height="15" uuid="743590be-ac93-4e01-9fef-e41437ed3b66"/>
+						<box topPadding="2" leftPadding="3" bottomPadding="2" rightPadding="3"/>
+						<textElement>
+							<font size="8" isBold="true" pdfFontName="Helvetica"/>
+						</textElement>
+						<text><![CDATA[:]]></text>
+					</staticText>
+					<staticText>
+						<reportElement x="0" y="0" width="112" height="15" uuid="1ebad3d9-23a2-4aa6-8a23-0b0bbc504ae8"/>
+						<box topPadding="2" leftPadding="3" bottomPadding="2" rightPadding="3"/>
+						<textElement>
+							<font size="8" isBold="false" pdfFontName="Helvetica-Bold"/>
+						</textElement>
+						<text><![CDATA[Nama Wajib Pajak]]></text>
+					</staticText>
+					<textField>
+						<reportElement x="125" y="0" width="436" height="15" uuid="10b60ea6-376c-406c-b22a-e56a29ed03c1"/>
+						<box topPadding="2" leftPadding="0" bottomPadding="2" rightPadding="3"/>
+						<textElement markup="none">
+							<font size="8" isBold="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{nama_wp}]]></textFieldExpression>
+					</textField>
+				</frame>
+				<frame>
+					<reportElement x="0" y="168" width="561" height="16" uuid="ad1c0e01-c36f-487b-a67c-48f2f4bafdcc"/>
+					<staticText>
+						<reportElement x="112" y="0" width="13" height="15" uuid="e156868f-fcf9-47c6-8549-717934cb9c14"/>
+						<box topPadding="2" leftPadding="3" bottomPadding="2" rightPadding="3"/>
+						<textElement>
+							<font size="8" isBold="true" pdfFontName="Helvetica"/>
+						</textElement>
+						<text><![CDATA[:]]></text>
+					</staticText>
+					<textField>
+						<reportElement x="125" y="0" width="436" height="15" uuid="bc0a2ce1-febd-4d67-b594-276ee2b305fc"/>
+						<box topPadding="2" leftPadding="0" bottomPadding="2" rightPadding="3"/>
+						<textElement markup="none">
+							<font size="8" isBold="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{alamat_op}]]></textFieldExpression>
+					</textField>
+					<staticText>
+						<reportElement x="0" y="0" width="112" height="15" uuid="210786af-e420-48fe-b48a-eb256f864fc7"/>
+						<box topPadding="2" leftPadding="3" bottomPadding="2" rightPadding="3"/>
+						<textElement>
+							<font size="8" isBold="false" pdfFontName="Helvetica-Bold"/>
+						</textElement>
+						<text><![CDATA[Alamat Objek Pajak]]></text>
+					</staticText>
+				</frame>
+				<frame>
+					<reportElement x="0" y="184" width="561" height="16" uuid="385bdb6c-b6e3-43dd-8b16-ac9b4c27111c"/>
+					<staticText>
+						<reportElement x="112" y="0" width="13" height="15" uuid="7e183d61-a861-44e2-917b-914ba5fae03f"/>
+						<box topPadding="2" leftPadding="3" bottomPadding="2" rightPadding="3"/>
+						<textElement>
+							<font size="8" isBold="true" pdfFontName="Helvetica"/>
+						</textElement>
+						<text><![CDATA[:]]></text>
+					</staticText>
+					<textField>
+						<reportElement x="125" y="0" width="436" height="15" uuid="66fc4f32-a9d2-45b5-ab30-c740ce326ccb"/>
+						<box topPadding="2" leftPadding="0" bottomPadding="2" rightPadding="3"/>
+						<textElement markup="none">
+							<font size="8" isBold="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{tahun_pajak}]]></textFieldExpression>
+					</textField>
+					<staticText>
+						<reportElement x="0" y="0" width="112" height="15" uuid="424cbc4d-3663-4161-a6de-c283d727f489"/>
+						<box topPadding="2" leftPadding="3" bottomPadding="2" rightPadding="3"/>
+						<textElement>
+							<font size="8" isBold="false" pdfFontName="Helvetica-Bold"/>
+						</textElement>
+						<text><![CDATA[Tahun Pajak]]></text>
+					</staticText>
+				</frame>
+				<frame>
+					<reportElement x="0" y="200" width="561" height="16" uuid="bb4cda58-730c-40d4-bb3f-066b8196bac2"/>
+					<staticText>
+						<reportElement x="0" y="0" width="112" height="15" uuid="400854c2-5fb8-4234-9c6f-74c99ea3cd72"/>
+						<box topPadding="2" leftPadding="3" bottomPadding="2" rightPadding="3"/>
+						<textElement>
+							<font size="8" isBold="false" pdfFontName="Helvetica-Bold"/>
+						</textElement>
+						<text><![CDATA[Tagihan]]></text>
+					</staticText>
+					<staticText>
+						<reportElement x="112" y="0" width="13" height="15" uuid="0988e1e9-5903-4833-ae2f-bd074fa9d14e"/>
+						<box topPadding="2" leftPadding="3" bottomPadding="2" rightPadding="3"/>
+						<textElement>
+							<font size="8" isBold="true" pdfFontName="Helvetica"/>
+						</textElement>
+						<text><![CDATA[:]]></text>
+					</staticText>
+					<textField>
+						<reportElement x="125" y="0" width="23" height="15" uuid="8fe86246-196a-4620-917a-aa46d01f3c98"/>
+						<box topPadding="2" leftPadding="0" bottomPadding="2" rightPadding="3"/>
+						<textElement markup="none">
+							<font size="8" isBold="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
+						</textElement>
+						<textFieldExpression><![CDATA["Rp."]]></textFieldExpression>
+					</textField>
+					<textField>
+						<reportElement x="148" y="0" width="115" height="15" uuid="7c0f4594-ba70-4550-8f0e-a251d1e6fe5a"/>
+						<box topPadding="2" leftPadding="0" bottomPadding="2" rightPadding="3"/>
+						<textElement textAlignment="Right" markup="none">
+							<font size="8" isBold="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
+						</textElement>
+						<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(($F{jumlah_pajak}).doubleValue()).replace(",", "x").replace(".", ",").replace("x", ".")]]></textFieldExpression>
+					</textField>
+				</frame>
+				<frame>
+					<reportElement x="0" y="216" width="561" height="16" uuid="c3073ca5-2d1d-4a48-8af4-8848ddd1d353"/>
+					<staticText>
+						<reportElement x="0" y="0" width="112" height="15" uuid="51efbf1f-a13e-4c57-aa74-d6b07dab1a79"/>
+						<box topPadding="2" leftPadding="3" bottomPadding="2" rightPadding="3"/>
+						<textElement>
+							<font size="8" isBold="false" pdfFontName="Helvetica-Bold"/>
+						</textElement>
+						<text><![CDATA[Denda]]></text>
+					</staticText>
+					<staticText>
+						<reportElement x="112" y="0" width="13" height="15" uuid="23e8371d-4b8d-47c1-8853-2e604f1a85e6"/>
+						<box topPadding="2" leftPadding="3" bottomPadding="2" rightPadding="3"/>
+						<textElement>
+							<font size="8" isBold="true" pdfFontName="Helvetica"/>
+						</textElement>
+						<text><![CDATA[:]]></text>
+					</staticText>
+					<textField>
+						<reportElement x="125" y="0" width="23" height="15" uuid="5084454a-1e48-4538-94bd-d826ad937d78"/>
+						<box topPadding="2" leftPadding="0" bottomPadding="2" rightPadding="3"/>
+						<textElement markup="none">
+							<font size="8" isBold="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
+						</textElement>
+						<textFieldExpression><![CDATA["Rp."]]></textFieldExpression>
+					</textField>
+					<textField>
+						<reportElement x="148" y="0" width="115" height="15" uuid="13b0094d-ec79-4d1b-b058-994309dbcc18"/>
+						<box topPadding="2" leftPadding="0" bottomPadding="2" rightPadding="3"/>
+						<textElement textAlignment="Right" markup="none">
+							<font size="8" isBold="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
+						</textElement>
+						<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(($F{jumlah_denda}).doubleValue()).replace(",", "x").replace(".", ",").replace("x", ".")]]></textFieldExpression>
+					</textField>
+				</frame>
+				<staticText>
+					<reportElement x="0" y="242" width="561" height="17" uuid="0f74afc6-6556-46c3-897e-fb1bd4c8b504"/>
+					<box topPadding="2" leftPadding="3" bottomPadding="2" rightPadding="3"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[Badan Pendapatan Daerah Kota Kendari menyatakan struk ini sebagai bukti pembayaran yang sah.]]></text>
+				</staticText>
+				<frame>
+					<reportElement x="0" y="270" width="561" height="16" uuid="9602d247-44b8-4ea4-9dc2-bd0f2d6e2770"/>
+					<staticText>
+						<reportElement x="112" y="0" width="13" height="15" uuid="ccbfc925-26d6-44f5-ac27-6fc5c97c1fe3"/>
+						<box topPadding="2" leftPadding="3" bottomPadding="2" rightPadding="3"/>
+						<textElement>
+							<font size="8" isBold="true" pdfFontName="Helvetica"/>
+						</textElement>
+						<text><![CDATA[:]]></text>
+					</staticText>
+					<textField>
+						<reportElement x="148" y="0" width="115" height="15" uuid="a839d4ae-8cdc-45fb-973b-c513db9697c8"/>
+						<box topPadding="2" leftPadding="0" bottomPadding="2" rightPadding="3"/>
+						<textElement textAlignment="Right" markup="none">
+							<font size="8" isBold="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
+						</textElement>
+						<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(($F{biaya_admin}).doubleValue()).replace(",", "x").replace(".", ",").replace("x", ".")]]></textFieldExpression>
+					</textField>
+					<staticText>
+						<reportElement x="0" y="0" width="112" height="15" uuid="6cc321a7-3f7b-4d3f-b83d-a52c34c14d5a"/>
+						<box topPadding="2" leftPadding="3" bottomPadding="2" rightPadding="3"/>
+						<textElement>
+							<font size="8" isBold="false" pdfFontName="Helvetica-Bold"/>
+						</textElement>
+						<text><![CDATA[Biaya Admin]]></text>
+					</staticText>
+					<textField>
+						<reportElement x="125" y="0" width="23" height="15" uuid="6ed5ee0a-b970-4082-8ae3-ea44ccae33bb"/>
+						<box topPadding="2" leftPadding="0" bottomPadding="2" rightPadding="3"/>
+						<textElement markup="none">
+							<font size="8" isBold="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
+						</textElement>
+						<textFieldExpression><![CDATA["Rp."]]></textFieldExpression>
+					</textField>
+				</frame>
+				<frame>
+					<reportElement x="0" y="286" width="561" height="16" uuid="5b9b0813-e96a-49fa-bcee-7a0537a7c684"/>
+					<staticText>
+						<reportElement x="112" y="0" width="13" height="15" uuid="787a0e49-6e49-4fca-b771-9f09b03c377a"/>
+						<box topPadding="2" leftPadding="3" bottomPadding="2" rightPadding="3"/>
+						<textElement>
+							<font size="8" isBold="true" pdfFontName="Helvetica"/>
+						</textElement>
+						<text><![CDATA[:]]></text>
+					</staticText>
+					<textField>
+						<reportElement x="148" y="0" width="115" height="15" uuid="e26bbb78-db94-4800-b65d-672f2bbae5f7"/>
+						<box topPadding="2" leftPadding="0" bottomPadding="2" rightPadding="3"/>
+						<textElement textAlignment="Right" markup="none">
+							<font size="8" isBold="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
+						</textElement>
+						<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format(($F{total_pembayaran}).doubleValue()).replace(",", "x").replace(".", ",").replace("x", ".")]]></textFieldExpression>
+					</textField>
+					<staticText>
+						<reportElement x="0" y="0" width="112" height="15" uuid="38755abf-856a-414b-b24c-e809c8649720"/>
+						<box topPadding="2" leftPadding="3" bottomPadding="2" rightPadding="3"/>
+						<textElement>
+							<font size="8" isBold="false" pdfFontName="Helvetica-Bold"/>
+						</textElement>
+						<text><![CDATA[Total Bayar]]></text>
+					</staticText>
+					<textField>
+						<reportElement x="125" y="0" width="23" height="15" uuid="77129aea-5079-46ce-8615-a6570969ad38"/>
+						<box topPadding="2" leftPadding="0" bottomPadding="2" rightPadding="3"/>
+						<textElement markup="none">
+							<font size="8" isBold="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
+						</textElement>
+						<textFieldExpression><![CDATA["Rp."]]></textFieldExpression>
+					</textField>
+				</frame>
+				<image>
+					<reportElement x="18" y="0" width="55" height="53" uuid="ee984820-1c92-4177-bcd2-58040d5a35f2"/>
+					<imageExpression><![CDATA[$P{image}]]></imageExpression>
+				</image>
+				<textField>
+					<reportElement x="0" y="26" width="561" height="21" uuid="a04bd1b0-7bf8-431c-8569-1bded8b3eeed"/>
+					<box topPadding="2" leftPadding="3" bottomPadding="2" rightPadding="3"/>
+					<textElement textAlignment="Center">
+						<font size="12" isBold="false" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Badan Pendapatan Daerah"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="0" y="6" width="560" height="18" uuid="e8fd0d1e-e5c9-49d7-acca-87d4d3b76d7d"/>
+					<box topPadding="2" leftPadding="3" bottomPadding="2" rightPadding="3"/>
+					<textElement textAlignment="Center">
+						<font isBold="false" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Pemerintah Kota Kendari"]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+</jasperReport>

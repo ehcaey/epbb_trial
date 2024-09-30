@@ -1,0 +1,892 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CetakSppt" language="groovy" pageWidth="504" pageHeight="540" columnWidth="464" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="90654523-d457-44cb-b720-7c333574da6e">
+	<property name="ireport.zoom" value="0.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<subDataset name="coding_sppt" uuid="c6e10b64-c205-459f-a6fa-d892cf4dc269">
+		<parameter name="kd_propinsi" class="java.lang.String"/>
+		<parameter name="kd_dati2" class="java.lang.String"/>
+		<parameter name="kd_kecamatan" class="java.lang.String"/>
+		<parameter name="kd_kelurahan" class="java.lang.String"/>
+		<parameter name="kd_blok" class="java.lang.String"/>
+		<parameter name="no_urut" class="java.lang.String"/>
+		<parameter name="kd_jns_op" class="java.lang.String"/>
+		<parameter name="thn_pajak_sppt" class="java.lang.String"/>
+		<parameter name="kd_kanwil" class="java.lang.String"/>
+		<parameter name="kd_kantor" class="java.lang.String"/>
+		<parameter name="nm_wp_sppt" class="java.lang.String"/>
+		<parameter name="pbb_yg_harus_dibayar_sppt" class="java.lang.Long">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[select * from pbb.coding_sppt($P{kd_propinsi}, $P{kd_dati2}, $P{kd_kecamatan}, $P{kd_kelurahan}, $P{kd_blok}, $P{no_urut}, $P{kd_jns_op}, $P{thn_pajak_sppt}, $P{kd_kanwil}, $P{kd_kantor}, $P{nm_wp_sppt}, $P{pbb_yg_harus_dibayar_sppt}, '' )]]>
+		</queryString>
+		<field name="coding_sppt" class="java.lang.String"/>
+	</subDataset>
+	<subDataset name="angka_control" uuid="cc92a7cc-0305-4bb8-950c-23fba3772786">
+		<parameter name="nop" class="java.lang.String"/>
+		<parameter name="siklus_sppt" class="java.lang.Integer">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<parameter name="thn_pajak_sppt" class="java.lang.String"/>
+		<queryString>
+			<![CDATA[select * from pbb.angka_kontrol($P{nop},$P{siklus_sppt},$P{thn_pajak_sppt})]]>
+		</queryString>
+		<field name="angka_kontrol" class="java.lang.String"/>
+	</subDataset>
+	<subDataset name="nilai_tarif" uuid="e5ebc110-3565-48a9-9173-b2f0ab373eb5">
+		<parameter name="kd_propinsi" class="java.lang.String"/>
+		<parameter name="kd_dati2" class="java.lang.String"/>
+		<parameter name="thn_pajak_sppt" class="java.lang.String"/>
+		<parameter name="njop_sppt" class="java.lang.String"/>
+		<parameter name="njoptkp_sppt" class="java.lang.Integer">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[select nilai_tarif from pbb.tarif
+  where KD_PROPINSI=$P{kd_propinsi} and
+  KD_DATI2=$P{kd_dati2} and
+  $P{thn_pajak_sppt} between THN_AWAL and THN_AKHIR
+  and $P{njoptkp_sppt} between NJOP_MIN and NJOP_MAX;]]>
+		</queryString>
+		<field name="nilai_tarif" class="java.lang.Float"/>
+	</subDataset>
+	<subDataset name="terbilang" uuid="6006b98b-1102-4a10-b44f-09ad1e347df8">
+		<parameter name="pbb_yg_harus_dibayar" class="java.lang.Long">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[select * from pbb.terbilang($P{pbb_yg_harus_dibayar})]]>
+		</queryString>
+		<field name="terbilang" class="java.lang.String"/>
+	</subDataset>
+	<subDataset name="ttd" uuid="380524ac-1ff3-4717-95de-4e4b9892b7e7">
+		<queryString>
+			<![CDATA[select a.nip,
+substr(a.nip, 1, 8)||' '||substr(a.nip, 9, 6)||' '||substr(a.nip, 15, 1)||' '||substr(a.nip, 16, 3) as nipp,
+a.nm_pegawai
+from pbb.pegawai a,pbb.posisi_pegawai b
+where a.nip=b.nip and
+b.kd_kanwil='01' and
+b.kd_kantor='01' and
+kd_jabatan='10']]>
+		</queryString>
+		<field name="nip" class="java.lang.String"/>
+		<field name="nipp" class="java.lang.String"/>
+		<field name="nm_pegawai" class="java.lang.String"/>
+	</subDataset>
+	<parameter name="nop" class="java.lang.String"/>
+	<parameter name="thn_pajak_sppt" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+A.NM_WP_SPPT,
+A.JLN_WP_SPPT,
+A.BLOK_KAV_NO_WP_SPPT,
+A.KELURAHAN_WP_SPPT,
+A.KOTA_WP_SPPT,
+coalesce(A.NPWP_SPPT,SUBSTR(A.NPWP_SPPT,1,2)||'.'||SUBSTR(A.NPWP_SPPT,3,3)||'.'||SUBSTR(A.NPWP_SPPT,6,3)||'.'||SUBSTR(A.NPWP_SPPT,9,1)||'-'||SUBSTR(A.NPWP_SPPT,10,3)||'.'||'000','BELUM ADA') AS NPWP_SPPT,
+'RT:'||coalesce(A.RT_WP_SPPT,'--')||' RW:'||coalesce(A.RW_WP_SPPT,'--') AS RTRW_WP,
+A.NO_PERSIL_SPPT, A.SIKLUS_SPPT,
+A.KD_KLS_TANAH,
+A.THN_AWAL_KLS_TANAH,
+A.KD_PROPINSI,
+A.KD_DATI2,
+A.KD_KECAMATAN,
+A.KD_KELURAHAN,
+A.KD_BLOK,
+A.NO_URUT,
+A.KD_JNS_OP,
+A.KD_KLS_BNG,
+A.THN_AWAL_KLS_BNG,
+trim(to_char(extract('day' from A.TGL_JATUH_TEMPO_SPPT::date), '09')||' / '||trim(to_char(extract('month' from A.TGL_JATUH_TEMPO_SPPT::date), '09'))||' / '
+||extract('year' from A.TGL_JATUH_TEMPO_SPPT::date)) as TGL_JATUH_TEMPO_SPPT,
+A.LUAS_BUMI_SPPT,
+A.LUAS_BNG_SPPT,
+A.NJOP_BUMI_SPPT,
+A.NJOP_BNG_SPPT,
+A.NJOP_SPPT,
+A.NJOPTKP_SPPT,
+A.PBB_TERHUTANG_SPPT,
+A.FAKTOR_PENGURANG_SPPT,
+A.PBB_YG_HARUS_DIBAYAR_SPPT,
+trim(to_char(extract('day' from A.TGL_TERBIT_SPPT::date), '09')||' / '||trim(to_char(extract('month' from A.TGL_TERBIT_SPPT::date), '09'))||' / '
+||extract('year' from A.TGL_TERBIT_SPPT::date)) as TGL_TERBIT_SPPT,
+A.KD_PROPINSI||'.'||A.KD_DATI2||'.'|| A.KD_KECAMATAN||'.'||A.KD_KELURAHAN||'.'||A.KD_BLOK||'-'||A.NO_URUT||'.'||A.KD_JNS_OP AS NOP,
+A.THN_PAJAK_SPPT,
+A.KD_KANWIL,
+A.KD_KANTOR,
+A.KD_TP,
+B.NM_DATI2,
+C.NM_KECAMATAN,
+D.NM_KELURAHAN,
+D.KD_SEKTOR,
+E.JALAN_OP,
+E.BLOK_KAV_NO_OP,
+'RT:'||coalesce(E.RT_OP,'--')||' RW:'||coalesce(E.RW_OP,'--') AS RTRW_OP,
+E.NO_PERSIL,
+F.NM_TP,
+F.ALAMAT_TP,
+G.NM_KANWIL,
+H.NM_KANTOR,
+H.KOTA_TERBIT,
+I.NM_SEKTOR,
+K.KD_KLS_TANAH AS KD_KLS_TANAH_BER,
+K.THN_AWAL_KLS_TANAH AS THN_AWAL_KLS_TANAH_BER,
+K.KD_KLS_BNG AS KD_KLS_BNG_BER,
+K.THN_AWAL_KLS_BNG AS THN_AWAL_KLS_BNG_BER,
+K.LUAS_BUMI_BEBAN_SPPT,
+K.LUAS_BNG_BEBAN_SPPT,
+K.NJOP_BUMI_BEBAN_SPPT,
+K.NJOP_BNG_BEBAN_SPPT,
+L.NM_PROPINSI
+FROM
+pbb.sppt a
+INNER JOIN PBB.REF_DATI2 B ON
+	A.KD_PROPINSI = B.KD_PROPINSI AND
+	A.KD_DATI2 = B.KD_DATI2
+
+INNER JOIN PBB.REF_KECAMATAN C ON
+	A.KD_PROPINSI = C.KD_PROPINSI AND
+	A.KD_DATI2 = C.KD_DATI2 AND
+	A.KD_KECAMATAN = C.KD_KECAMATAN
+
+INNER JOIN PBB.REF_KELURAHAN D ON
+	A.KD_PROPINSI = D.KD_PROPINSI AND
+	A.KD_DATI2 = D.KD_DATI2 AND
+	A.KD_KECAMATAN = D.KD_KECAMATAN AND
+	A.KD_KELURAHAN = D.KD_KELURAHAN
+
+INNER JOIN PBB.DAT_OBJEK_PAJAK E ON
+	A.KD_PROPINSI = E.KD_PROPINSI AND
+	A.KD_DATI2 = E.KD_DATI2 AND
+	A.KD_KECAMATAN = E.KD_KECAMATAN AND
+	A.KD_KELURAHAN = E.KD_KELURAHAN AND
+	A.KD_BLOK = E.KD_BLOK AND
+	A.NO_URUT = E.NO_URUT AND
+	A.KD_JNS_OP = E.KD_JNS_OP
+
+INNER JOIN PBB.TEMPAT_PEMBAYARAN F ON
+	A.KD_KANWIL = F.KD_KANWIL AND
+	A.KD_KANTOR = F.KD_KANTOR AND
+	A.KD_TP = F.KD_TP
+
+INNER JOIN PBB.REF_KANWIL G ON
+	A.KD_KANWIL = G.KD_KANWIL
+
+INNER JOIN PBB.REF_KANTOR H ON
+	A.KD_KANWIL = H.KD_KANWIL AND
+	A.KD_KANTOR = H.KD_KANTOR
+
+INNER JOIN PBB.REF_JNS_SEKTOR I ON
+	D.KD_SEKTOR = I.KD_SEKTOR
+
+LEFT JOIN PBB.TEMP_SPPT J ON
+	A.KD_PROPINSI = J.KD_PROPINSI AND
+	A.KD_DATI2 = J.KD_DATI2 AND
+	A.KD_KECAMATAN = J.KD_KECAMATAN AND
+	A.KD_KELURAHAN = J.KD_KELURAHAN AND
+	A.KD_BLOK = J.KD_BLOK AND
+	A.NO_URUT = J.NO_URUT AND
+	A.KD_JNS_OP = J.KD_JNS_OP
+
+LEFT JOIN PBB.SPPT_OP_BERSAMA K ON
+	A.KD_PROPINSI = K.KD_PROPINSI AND
+	A.KD_DATI2 = K.KD_DATI2 AND
+	A.KD_KECAMATAN = K.KD_KECAMATAN AND
+	A.KD_KELURAHAN = K.KD_KELURAHAN AND
+	A.KD_BLOK = K.KD_BLOK AND
+	A.NO_URUT = K.NO_URUT AND
+	A.KD_JNS_OP = K.KD_JNS_OP
+
+INNER JOIN PBB.REF_PROPINSI L ON
+	A.KD_PROPINSI = L.KD_PROPINSI
+
+where
+A.KD_PROPINSI = substr($P{nop}, 1, 2) AND
+A.KD_DATI2 = substr($P{nop}, 3, 2) AND
+A.KD_KECAMATAN = substr($P{nop}, 5, 3) AND
+A.KD_KELURAHAN = substr($P{nop}, 8, 3) AND
+A.KD_BLOK = substr($P{nop}, 11, 3) AND
+A.NO_URUT = substr($P{nop}, 14, 4) AND
+A.KD_JNS_OP = substr($P{nop}, 18, 1) AND
+A.THN_PAJAK_SPPT = $P{thn_pajak_sppt}
+
+ORDER BY A.KD_PROPINSI,A.KD_DATI2,A.KD_KECAMATAN,
+A.KD_KELURAHAN,A.KD_BLOK,A.NO_URUT,A.KD_JNS_OP;]]>
+	</queryString>
+	<field name="nm_wp_sppt" class="java.lang.String"/>
+	<field name="jln_wp_sppt" class="java.lang.String"/>
+	<field name="blok_kav_no_wp_sppt" class="java.lang.String"/>
+	<field name="kelurahan_wp_sppt" class="java.lang.String"/>
+	<field name="kota_wp_sppt" class="java.lang.String"/>
+	<field name="npwp_sppt" class="java.lang.String"/>
+	<field name="rtrw_wp" class="java.lang.String"/>
+	<field name="no_persil_sppt" class="java.lang.String"/>
+	<field name="siklus_sppt" class="java.lang.Integer"/>
+	<field name="kd_kls_tanah" class="java.lang.String"/>
+	<field name="thn_awal_kls_tanah" class="java.lang.String"/>
+	<field name="kd_propinsi" class="java.lang.String"/>
+	<field name="kd_dati2" class="java.lang.String"/>
+	<field name="kd_kecamatan" class="java.lang.String"/>
+	<field name="kd_kelurahan" class="java.lang.String"/>
+	<field name="kd_blok" class="java.lang.String"/>
+	<field name="no_urut" class="java.lang.String"/>
+	<field name="kd_jns_op" class="java.lang.String"/>
+	<field name="kd_kls_bng" class="java.lang.String"/>
+	<field name="thn_awal_kls_bng" class="java.lang.String"/>
+	<field name="tgl_jatuh_tempo_sppt" class="java.lang.String"/>
+	<field name="luas_bumi_sppt" class="java.lang.Long"/>
+	<field name="luas_bng_sppt" class="java.lang.Long"/>
+	<field name="njop_bumi_sppt" class="java.lang.Long"/>
+	<field name="njop_bng_sppt" class="java.lang.Long"/>
+	<field name="njop_sppt" class="java.lang.Long"/>
+	<field name="njoptkp_sppt" class="java.lang.Integer"/>
+	<field name="pbb_terhutang_sppt" class="java.lang.Long"/>
+	<field name="faktor_pengurang_sppt" class="java.lang.Long"/>
+	<field name="pbb_yg_harus_dibayar_sppt" class="java.lang.Long"/>
+	<field name="tgl_terbit_sppt" class="java.lang.String"/>
+	<field name="nop" class="java.lang.String"/>
+	<field name="thn_pajak_sppt" class="java.lang.String"/>
+	<field name="kd_kanwil" class="java.lang.String"/>
+	<field name="kd_kantor" class="java.lang.String"/>
+	<field name="kd_tp" class="java.lang.String"/>
+	<field name="nm_dati2" class="java.lang.String"/>
+	<field name="nm_kecamatan" class="java.lang.String"/>
+	<field name="nm_kelurahan" class="java.lang.String"/>
+	<field name="kd_sektor" class="java.lang.String"/>
+	<field name="jalan_op" class="java.lang.String"/>
+	<field name="blok_kav_no_op" class="java.lang.String"/>
+	<field name="rtrw_op" class="java.lang.String"/>
+	<field name="no_persil" class="java.lang.String"/>
+	<field name="nm_tp" class="java.lang.String"/>
+	<field name="alamat_tp" class="java.lang.String"/>
+	<field name="nm_kanwil" class="java.lang.String"/>
+	<field name="nm_kantor" class="java.lang.String"/>
+	<field name="kota_terbit" class="java.lang.String"/>
+	<field name="nm_sektor" class="java.lang.String"/>
+	<field name="kd_kls_tanah_ber" class="java.lang.String"/>
+	<field name="thn_awal_kls_tanah_ber" class="java.lang.String"/>
+	<field name="kd_kls_bng_ber" class="java.lang.String"/>
+	<field name="thn_awal_kls_bng_ber" class="java.lang.String"/>
+	<field name="luas_bumi_beban_sppt" class="java.lang.Long"/>
+	<field name="luas_bng_beban_sppt" class="java.lang.Long"/>
+	<field name="njop_bumi_beban_sppt" class="java.lang.Long"/>
+	<field name="njop_bng_beban_sppt" class="java.lang.Long"/>
+	<field name="nm_propinsi" class="java.lang.String"/>
+	<variable name="njop_bumi" class="java.lang.String">
+		<variableExpression><![CDATA[$F{njop_bumi_sppt}==0 ?
+0 :
+new java.text.DecimalFormat("#,##0").format($F{njop_bumi_sppt}.doubleValue())]]></variableExpression>
+	</variable>
+	<variable name="njop_bang" class="java.lang.String">
+		<variableExpression><![CDATA[$F{njop_bng_sppt}==0 ?
+0 :
+new java.text.DecimalFormat("#,##0").format($F{njop_bng_sppt}.doubleValue())]]></variableExpression>
+	</variable>
+	<variable name="njoptkp" class="java.lang.String">
+		<variableExpression><![CDATA[$F{njoptkp_sppt}==0 ?
+0 :
+new java.text.DecimalFormat("#,##0").format($F{njoptkp_sppt}.doubleValue())]]></variableExpression>
+	</variable>
+	<background>
+		<band height="499">
+			<image scaleImage="FillFrame">
+				<reportElement uuid="16a6f338-2bcb-4953-900e-711ca0fcc215" x="0" y="0" width="464" height="499"/>
+				<imageExpression><![CDATA["C:\\xampp\\htdocs\\e-pbb\\frontend\\web\\images\\template-sppt.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<detail>
+		<band height="499" splitType="Stretch">
+			<textField>
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" x="332" y="54" width="41" height="13"/>
+				<textElement>
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{thn_pajak_sppt}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="373" y="54" width="67" height="13"/>
+				<textElement>
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nm_sektor}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="37" y="65" width="121" height="13"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nop}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="39" y="91" width="179" height="9"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{jalan_op}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="39" y="100" width="179" height="9"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{rtrw_op}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="39" y="109" width="179" height="9"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nm_kelurahan}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="39" y="118" width="179" height="9"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nm_kecamatan}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="39" y="127" width="179" height="9"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nm_dati2}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="39" y="136" width="179" height="9"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nm_propinsi}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="285" y="100" width="179" height="9"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{jln_wp_sppt}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="285" y="91" width="179" height="9"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nm_wp_sppt}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="285" y="109" width="179" height="9"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{rtrw_wp}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="285" y="127" width="179" height="9"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{kota_wp_sppt}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="285" y="118" width="179" height="9"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{kelurahan_wp_sppt}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="285" y="136" width="179" height="9"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{kota_wp_sppt}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="6ebb48c5-24f9-4fb4-ac2e-61b45ee31040" x="27" y="171" width="51" height="9"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[BUMI]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="6ebb48c5-24f9-4fb4-ac2e-61b45ee31040" x="27" y="180" width="51" height="9"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[BANGUNAN]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="92" y="171" width="41" height="9"/>
+				<textElement textAlignment="Right">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{luas_bumi_sppt}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="92" y="180" width="41" height="9"/>
+				<textElement textAlignment="Right">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{luas_bng_sppt}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="27" y="189" width="51" height="9"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{njop_bumi_beban_sppt}==null ?
+"" : "BUMI BERSAMA"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="27" y="198" width="51" height="9"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{njop_bng_beban_sppt}==null ?
+"" : "BANG BERSAMA"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="92" y="189" width="41" height="9"/>
+				<textElement textAlignment="Right">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{njop_bumi_beban_sppt}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="92" y="198" width="41" height="9"/>
+				<textElement textAlignment="Right">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{njop_bng_beban_sppt}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="166" y="171" width="41" height="9"/>
+				<textElement textAlignment="Center">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{kd_kls_tanah}.toUpperCase() == 'XXX' ? 0 : $F{kd_kls_tanah}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="166" y="180" width="41" height="9"/>
+				<textElement textAlignment="Center">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{kd_kls_bng}.toUpperCase()=='XXX' ? 0 : $F{kd_kls_bng}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="166" y="189" width="41" height="9"/>
+				<textElement textAlignment="Center">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{kd_kls_tanah_ber}.toUpperCase()=="XXX" ? "XXX" : $F{kd_kls_tanah_ber}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="166" y="198" width="41" height="9"/>
+				<textElement textAlignment="Center">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{kd_kls_bng_ber}.toUpperCase()=="XXX" ? "XXX" : $F{kd_kls_bng_ber}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="224" y="171" width="76" height="9"/>
+				<textElement textAlignment="Right">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{njop_bumi_sppt}==0 ?
+0 :
+new java.text.DecimalFormat("#,##0").format($F{njop_bumi_sppt}.doubleValue()/$F{luas_bumi_sppt}.doubleValue())]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="224" y="180" width="76" height="9"/>
+				<textElement textAlignment="Right">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{njop_bng_sppt}==0 ?
+0 :
+new java.text.DecimalFormat("#,##0").format($F{njop_bng_sppt}.doubleValue()/$F{luas_bng_sppt}.doubleValue())]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="224" y="189" width="76" height="9"/>
+				<textElement textAlignment="Right">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{njop_bumi_beban_sppt}==null ?
+"" :
+new java.text.DecimalFormat("#,##0").format($F{njop_bumi_beban_sppt}.doubleValue()/$F{luas_bumi_beban_sppt}.doubleValue())]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="224" y="198" width="76" height="9"/>
+				<textElement textAlignment="Right">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{njop_bng_beban_sppt}==null ?
+"" :
+new java.text.DecimalFormat("#,##0").format($F{njop_bng_beban_sppt}.doubleValue()/$F{luas_bng_beban_sppt}.doubleValue())]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="322" y="171" width="108" height="9"/>
+				<textElement textAlignment="Right">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{njop_bumi_sppt}==0 ?
+0 :
+new java.text.DecimalFormat("#,##0").format($F{njop_bumi_sppt}.doubleValue())]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="322" y="180" width="108" height="9"/>
+				<textElement textAlignment="Right">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{njop_bng_sppt}==0 ?
+0 :
+new java.text.DecimalFormat("#,##0").format($F{njop_bng_sppt}.doubleValue())]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="322" y="189" width="108" height="9"/>
+				<textElement textAlignment="Right">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{njop_bumi_beban_sppt}==null ?
+"" : new java.text.DecimalFormat("#,##0").format($F{njop_bumi_beban_sppt}.doubleValue())]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="322" y="198" width="108" height="9"/>
+				<textElement textAlignment="Right">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{njop_bng_beban_sppt}==null ?
+"" : new java.text.DecimalFormat("#,##0").format($F{njop_bng_beban_sppt}.doubleValue())]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="349" y="223" width="81" height="10"/>
+				<textElement textAlignment="Right">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{njop_sppt}==0 ?
+0 :
+new java.text.DecimalFormat("#,##0").format($F{njop_sppt}.doubleValue())]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="349" y="233" width="81" height="10"/>
+				<textElement textAlignment="Right">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{njoptkp_sppt}==0 ?
+0 :
+new java.text.DecimalFormat("#,##0").format($F{njoptkp_sppt}.doubleValue())]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="349" y="243" width="81" height="10"/>
+				<textElement textAlignment="Right">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{njop_sppt})==0 ?
+0 :
+new java.text.DecimalFormat("#,##0").format(($F{njop_sppt}).doubleValue())]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="349" y="264" width="81" height="10"/>
+				<textElement textAlignment="Right">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pbb_terhutang_sppt}==0 ?
+0 :
+new java.text.DecimalFormat("#,##0").format($F{pbb_terhutang_sppt}.doubleValue())]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="349" y="254" width="81" height="10"/>
+				<textElement textAlignment="Right">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{faktor_pengurang_sppt}==0 ?
+"" : $F{faktor_pengurang_sppt}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="349" y="304" width="81" height="10"/>
+				<textElement textAlignment="Right">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pbb_yg_harus_dibayar_sppt}==0 ?
+0 :
+new java.text.DecimalFormat("#,##0").format($F{pbb_yg_harus_dibayar_sppt}.doubleValue())]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement uuid="9bb003ee-be17-4b09-b181-56883269fc6e" x="232" y="67" width="90" height="10"/>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
+					<datasetRun subDataset="coding_sppt" uuid="81882448-ec93-4774-8e48-cdd79ae7c08d">
+						<datasetParameter name="kd_propinsi">
+							<datasetParameterExpression><![CDATA[$F{kd_propinsi}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="kd_dati2">
+							<datasetParameterExpression><![CDATA[$F{kd_dati2}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="kd_kecamatan">
+							<datasetParameterExpression><![CDATA[$F{kd_kecamatan}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="kd_kelurahan">
+							<datasetParameterExpression><![CDATA[$F{kd_kelurahan}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="kd_blok">
+							<datasetParameterExpression><![CDATA[$F{kd_blok}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="no_urut">
+							<datasetParameterExpression><![CDATA[$F{no_urut}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="kd_jns_op">
+							<datasetParameterExpression><![CDATA[$F{kd_jns_op}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="thn_pajak_sppt">
+							<datasetParameterExpression><![CDATA[$F{thn_pajak_sppt}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="kd_kanwil">
+							<datasetParameterExpression><![CDATA[$F{kd_kanwil}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="kd_kantor">
+							<datasetParameterExpression><![CDATA[$F{kd_kantor}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="nm_wp_sppt">
+							<datasetParameterExpression><![CDATA[$F{nm_wp_sppt}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="pbb_yg_harus_dibayar_sppt">
+							<datasetParameterExpression><![CDATA[$F{pbb_yg_harus_dibayar_sppt}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:listContents height="10" width="90">
+						<textField isStretchWithOverflow="true">
+							<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="0" y="0" width="90" height="10"/>
+							<textElement>
+								<font size="6" isBold="true"/>
+							</textElement>
+							<textFieldExpression><![CDATA["#"+$F{coding_sppt}+"#"]]></textFieldExpression>
+						</textField>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
+			<componentElement>
+				<reportElement uuid="8ec13075-0fb2-4af2-8f74-3a90b1185fbc" x="322" y="67" width="67" height="10"/>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
+					<datasetRun subDataset="angka_control" uuid="488dcfd3-b2af-4f6c-bf54-5367bb81d29c">
+						<datasetParameter name="nop">
+							<datasetParameterExpression><![CDATA[$P{nop}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="siklus_sppt">
+							<datasetParameterExpression><![CDATA[$F{siklus_sppt}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="thn_pajak_sppt">
+							<datasetParameterExpression><![CDATA[$F{thn_pajak_sppt}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:listContents height="10" width="67">
+						<textField isBlankWhenNull="true">
+							<reportElement uuid="865e67c1-cca7-46bc-a328-20f42bc8657f" x="0" y="0" width="67" height="10"/>
+							<textElement>
+								<font size="6" isBold="true"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{angka_kontrol}]]></textFieldExpression>
+						</textField>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="193" y="244" width="139" height="10"/>
+				<textElement textAlignment="Right">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["(" + $V{njop_bumi} + " + (" + $V{njop_bang} + "-" + $V{njoptkp} + "))"]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement uuid="fe54a895-bf0f-49cb-86bf-09c02092d4b5" x="100" y="244" width="93" height="10"/>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
+					<datasetRun subDataset="nilai_tarif" uuid="cfb9a033-f81b-4ab2-9767-eca034bf21a6">
+						<datasetParameter name="kd_propinsi">
+							<datasetParameterExpression><![CDATA[$F{kd_propinsi}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="kd_dati2">
+							<datasetParameterExpression><![CDATA[$F{kd_dati2}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="thn_pajak_sppt">
+							<datasetParameterExpression><![CDATA[$F{thn_pajak_sppt}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="njop_sppt">
+							<datasetParameterExpression><![CDATA[$F{njop_sppt}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="njoptkp_sppt">
+							<datasetParameterExpression><![CDATA[$F{njoptkp_sppt}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:listContents height="10" width="93">
+						<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+							<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="0" y="0" width="93" height="10"/>
+							<textElement textAlignment="Right">
+								<font size="7" isBold="true"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{nilai_tarif} + " % x "]]></textFieldExpression>
+						</textField>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="100" y="254" width="232" height="10"/>
+				<textElement textAlignment="Right">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{faktor_pengurang_sppt}==0 ?
+"" : "Faktor Pengurang/Pengaturan Pengenaan"]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement uuid="24f88145-e085-4c2b-a04a-a0b070f2d84d" x="27" y="304" width="273" height="10"/>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
+					<datasetRun subDataset="terbilang" uuid="31c4ce10-ad6a-4434-a85a-e46a0d301f08">
+						<datasetParameter name="pbb_yg_harus_dibayar">
+							<datasetParameterExpression><![CDATA[$F{pbb_yg_harus_dibayar_sppt}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:listContents height="10" width="273">
+						<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+							<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="0" y="0" width="273" height="10"/>
+							<textElement>
+								<font size="7" isBold="true" isItalic="true"/>
+							</textElement>
+							<textFieldExpression><![CDATA['"' + $F{terbilang} + '"']]></textFieldExpression>
+						</textField>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="112" y="324" width="81" height="10"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tgl_jatuh_tempo_sppt}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="59" y="364" width="188" height="10"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nm_tp}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="59" y="374" width="188" height="10"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{alamat_tp}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="292" y="324" width="57" height="10"/>
+				<textElement textAlignment="Right">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{kota_terbit} + ", "]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="349" y="324" width="81" height="10"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tgl_terbit_sppt}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement uuid="c3c76e01-f28f-40c7-8298-134e33b1dbb3" x="292" y="374" width="138" height="20"/>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
+					<datasetRun subDataset="ttd" uuid="380935af-ee18-4e45-8d75-a17b79e9f26e">
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:listContents height="20" width="138">
+						<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+							<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="0" y="0" width="138" height="10"/>
+							<textElement textAlignment="Center">
+								<font size="7" isBold="true" isUnderline="true"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{nm_pegawai}]]></textFieldExpression>
+						</textField>
+						<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+							<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="0" y="10" width="138" height="10"/>
+							<textElement textAlignment="Center">
+								<font size="7" isBold="true"/>
+							</textElement>
+							<textFieldExpression><![CDATA["NIP. " + $F{nipp}]]></textFieldExpression>
+						</textField>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="100" y="427" width="166" height="10"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nm_wp_sppt}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="158" y="438" width="108" height="10"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nm_kecamatan}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="158" y="448" width="108" height="10"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nm_kelurahan}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="100" y="459" width="166" height="10"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nop}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="100" y="470" width="33" height="10"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pbb_terhutang_sppt} + " - "]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="158" y="470" width="74" height="10"/>
+				<textElement textAlignment="Right">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pbb_yg_harus_dibayar_sppt}==0 ?
+0 :
+new java.text.DecimalFormat("#,##0").format($F{pbb_yg_harus_dibayar_sppt}.doubleValue())]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement uuid="c4e2c56e-2a14-410c-a924-e91dacba3d8f" x="133" y="470" width="25" height="10"/>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
+					<datasetRun subDataset="angka_control" uuid="afaa9d6f-cce2-4c09-8297-4e77fbfcc3e9">
+						<datasetParameter name="nop">
+							<datasetParameterExpression><![CDATA[$P{nop}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="siklus_sppt">
+							<datasetParameterExpression><![CDATA[$F{siklus_sppt}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="thn_pajak_sppt">
+							<datasetParameterExpression><![CDATA[$F{thn_pajak_sppt}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:listContents height="10" width="25">
+						<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+							<reportElement uuid="3cb508bf-9480-41d4-9157-e2a808e326e4" stretchType="RelativeToBandHeight" x="0" y="0" width="25" height="10"/>
+							<textElement>
+								<font size="7" isBold="true"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{angka_kontrol}]]></textFieldExpression>
+						</textField>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
+		</band>
+	</detail>
+</jasperReport>

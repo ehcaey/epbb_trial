@@ -1,0 +1,267 @@
+/* Terapkan font ke seluruh elemen di website */
+body {
+    font-family: 'Nunito', sans-serif; /* Atur font utama */
+}
+
+/* Atau jika Anda ingin elemen lain punya font yang berbeda */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Nunito', sans-serif !important; /* Gunakan font Nunito untuk heading */
+}
+
+p, a, div, span {
+    font-family: 'Nunito', sans-serif; /* Gunakan Quicksand untuk teks umum */
+}
+
+.login-box {
+    /* background-color: #ffffffcb; */
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 10px;
+    width: 30% !important;
+    border-radius: 10px;
+    position: relative;
+    z-index: 1;
+    /* box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px; */
+}
+
+.judul {
+    margin-top: 5px;
+    font-size: 27px;
+}
+
+.sub-judul {
+    font-size: 19px;
+}
+
+@media screen and (max-width: 768px) {
+    .login-box {
+        background-color: rgba(255, 255, 255, 0.8);
+        padding: 10px;
+        width: 90% !important;
+        border-radius: 10px;
+        position: relative;
+        z-index: 1;
+    }
+}
+
+.panel-heading.d-flex {
+    display: flex;
+    justify-content: space-between; /* Mengatur elemen untuk tersebar di seluruh baris */
+    align-items: center; /* Menyelaraskan elemen secara vertikal di tengah */
+}
+
+.mask {
+    /* position: absolute; */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* background-color: rgba(0, 0, 0, 0.5); */
+    background-color: rgba(0, 0, 0, 0.304); /* Adjust the alpha value (0.5) for the desired transparency */
+    z-index: -1;
+}
+
+.heading-kanan {
+    text-align: left !important; 
+    padding: 0 !important;
+}
+
+@media screen and (max-width: 768px) {
+    .heading-kanan {
+        text-align: center !important; 
+        padding: 0 !important;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .tombol-kanan {
+        margin-top: 10px;
+    }
+}
+
+
+.login-logo {
+    margin-bottom: 0 !important;
+    color: black !important;
+    display: flex;
+    align-items: center;
+    /* text-align: left; */
+}
+
+.login-box-body{
+    background-color: #ffffff00 !important;
+}
+
+.signup {
+    margin-top: 50px !important;
+    margin-bottom: 0 !important;
+    background-color: rgba(255, 255, 255, 0.8) !important;
+    /* background-color: rgba(255, 255, 255, 0.8) !important; */
+}
+
+.signup .login-logo {
+   text-align: center;
+   color: red;
+   display: block;
+}
+
+.center {
+    position: relative;
+    height: 100vh;
+    background-position-y: -110px;
+    background-image: url('/images/bg.jpg');
+    background-size: cover;
+    z-index: 1;
+}
+  
+.center .wrap {
+    margin: 0;
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    /* background-color: #ffffff92; */
+    background-color: rgba(255, 255, 255, 0.8);
+    padding : 5px 30px 20px 30px;
+    border-radius: 10px;
+}
+
+@media screen and (max-width: 768px) {
+    .center .wrap {
+        width: 95%;
+        margin: 0;
+        position: absolute;
+        top: 45%;
+        left: 50%;
+        -ms-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+        /* background-color: #ffffff92; */
+        background-color: rgba(255, 255, 255, 0.8);
+        padding: 5px 15px 15px 15px;
+        border-radius: 10px;
+    }
+}
+
+.logo {
+    display: flex;
+}
+
+@media screen and (max-width: 768px) {
+    .logo div h3, h4 {
+        font-size: 17px !important;
+    }
+}
+
+.logo-kendari {
+    width: 100px;
+}
+
+.logo-img {
+    width: 100px;
+    height: 115px;
+    align-items: center;
+    align-self: center;
+    /* align-content: center; */
+    margin-top: 5px;
+}
+
+.footer{
+    width: 100%;
+    height: 50px;
+    padding-left: 10px;
+    /* background: #dedede; */
+    background-color: #ebedef;
+    position: absolute;
+    bottom: 0px;
+    padding-top: 5px;
+}
+
+.nop {
+    margin-top: 20px;
+}
+
+.input-nop {
+    width: 100%;
+    height: 40px;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.form-nop {
+    width: 100% !important;
+}
+
+.form-input-nop {
+    width: 85% !important;
+    border-radius: 3px !important;
+}
+
+.btn-nop {
+    width: 14% !important;
+}
+
+.detail {
+    position: relative;
+    margin-top: 50px;
+    margin-left: 50px;
+    margin-right: 50px;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    z-index: 1;
+}
+
+.input1 {
+    width: 100%;
+    border: 2px solid rgb(190, 190, 190);
+    border-radius: 5px;
+    height: 40px;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+.piutang {
+    position: relative;
+    margin-top: 20px;
+    margin-left: 50px;
+    margin-right: 50px;
+    margin-bottom: 50px;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    z-index: 1;
+}
+
+.line {
+    border: 3px solid skyblue;
+    border-radius: 2px;
+}
+
+.footer-detail {
+    width: 100%;
+    height: 50px;
+    padding-left: 10px;
+    position: absolute;
+    bottom: 0px;
+    padding-top: 5px;
+    background-color: #d4d4dc;
+    border-top: 1px solid  rgb(190, 190, 190);
+}
+
+#search-form {
+    width: 100%;
+    display: flex;
+    gap: 8px;
+}
+
+.alert {
+    margin-bottom: 0px !important;
+}
+
+.total {
+    border-radius: 5px;
+    /* border: 2px solid grey; */
+    border: 1px solid grey;
+}
