@@ -16,6 +16,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use aryelds\sweetalert\SweetAlert;
 
 /**
  * ObjekPajakController implements the CRUD actions for ObjekPajak model.
@@ -57,6 +58,19 @@ class ObjekPajakController extends Controller
         $searchModel = new ObjekPajakSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
+        echo SweetAlert::widget([
+            'options' => [
+                'title' => "Perhatian! Isi data objek pajak dengan benar:",
+                'text' => "NOP (Nomor Objek Pajak): Masukkan NOP yang tertera pada surat pemberitahuan pajak.\n" .
+                          "Alamat: Pastikan alamat objek pajak sesuai dengan dokumen resmi.\n" .
+                          "Luas Tanah dan Bangunan: Masukkan total luas tanah dan bangunan dengan benar.\n" 
+            ,
+                'icon' => 'warning',
+                'confirmButtonText' => 'OK',
+                'showCloseButton' => true,
+            ]
+        ]);
+        
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
