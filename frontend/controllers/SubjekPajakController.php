@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use aryelds\sweetalert\SweetAlert;
 use Yii;
 use frontend\models\SubjekPajak;
 use frontend\models\SubjekPajakSearch;
@@ -103,6 +104,24 @@ class SubjekPajakController extends Controller
                 $model->status_pekerjaan_wp = $model->status_pekerjaan_wp . ' ';
             }
         }
+
+
+        echo SweetAlert::widget([
+            'options' => [
+                'title' => "Penting! Harap isi kolom pada tabel Identitas Wajib Pajak dengan lengkap dan benar:",
+                'text' => "NIK: Masukkan sesuai dengan NIK pada KTP.\n" .
+                          "Nama: Isi dengan nama lengkap pemilik objek pajak.\n" .
+                          "Alamat: Gunakan alamat sesuai KTP atau domisili.\n" .
+                          "Kelurahan, Kecamatan, Kota/Kabupaten, Provinsi: Isi dengan nama wilayah sesuai dengan KTP atau domisili.\n" .
+                          "Nomor Handphone: Pastikan nomor yang dimasukkan aktif dan benar.\n" .
+                          "Email: Masukkan email aktif yang bisa dihubungi.\n" .
+                          "Pastikan semua data terisi dengan benar untuk kelancaran proses perpajakan.",
+                'icon' => 'warning',
+                'confirmButtonText' => 'OK',
+                'showCloseButton' => true,
+            ]
+        ]);
+        
 
         return $this->render('create', compact('model', 'pekerjaanList'));
     }
