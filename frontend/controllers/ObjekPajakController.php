@@ -9,7 +9,7 @@ use frontend\models\ObjekPajak;
 use frontend\models\ObjekPajakSearch;
 use frontend\models\OpBumi;
 use frontend\models\OpBangunan;
-use frontend\models\SubjekPajak;
+use frontend\models\SubjekPajak; 
 use frontend\models\Referensi\JenisTanah;
 use frontend\models\Referensi\Kelurahan;
 use yii\web\Controller;
@@ -61,10 +61,9 @@ class ObjekPajakController extends Controller
         echo SweetAlert::widget([
             'options' => [
                 'title' => "Perhatian! Isi data objek pajak dengan benar:",
-                'text' => "NOP (Nomor Objek Pajak): Masukkan NOP yang tertera pada surat pemberitahuan pajak.\n" .
-                          "Alamat: Pastikan alamat objek pajak sesuai dengan dokumen resmi.\n" .
-                          "Luas Tanah dan Bangunan: Masukkan total luas tanah dan bangunan dengan benar.\n" 
-            ,
+                'text' => "NOP: Masukkan NOP yang sesuai.\n" .
+                          "Alamat: Pastikan alamat objek pajak benar.\n" .
+                          "Luas Tanah dan Bangunan: Isi sesuai dokumen.",
                 'icon' => 'warning',
                 'confirmButtonText' => 'OK',
                 'showCloseButton' => true,
