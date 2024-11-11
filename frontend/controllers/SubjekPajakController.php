@@ -108,14 +108,13 @@ class SubjekPajakController extends Controller
 
         echo SweetAlert::widget([
             'options' => [
-                'title' => "Penting! Harap isi kolom pada tabel Identitas Wajib Pajak dengan lengkap dan benar:",
-                'text' => "NIK: Masukkan sesuai dengan NIK pada KTP.\n" .
-                          "Nama: Isi dengan nama lengkap pemilik objek pajak.\n" .
-                          "Alamat: Gunakan alamat sesuai KTP atau domisili.\n" .
-                          "Kelurahan, Kecamatan, Kota/Kabupaten, Provinsi: Isi dengan nama wilayah sesuai dengan KTP atau domisili.\n" .
-                          "Nomor Handphone: Pastikan nomor yang dimasukkan aktif dan benar.\n" .
-                          "Email: Masukkan email aktif yang bisa dihubungi.\n" .
-                          "Pastikan semua data terisi dengan benar untuk kelancaran proses perpajakan.",
+                'title' => "Perhatian! Isi data Identitas Wajib Pajak dengan benar",
+                'text' => "NIK: Sesuai KTP\n" .
+                          "Nama: Nama lengkap pemilik\n" .
+                          "Alamat: Sesuai KTP atau domisili\n" .
+                          "Wilayah: Kelurahan, Kecamatan, Kota/Kabupaten, Provinsi\n" .
+                          "No. HP: Aktif dan benar\n" .
+                          "Email: Email aktif\n\n",
                 'icon' => 'warning',
                 'confirmButtonText' => 'OK',
                 'showCloseButton' => true,
